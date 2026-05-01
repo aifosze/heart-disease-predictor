@@ -50,11 +50,10 @@ if select_var == "Home":
         st.image("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png", width=280)
         st.markdown("---")
         st.subheader("📊 Models in This App")
-        st.info("🌸 **Iris Species Classifier**\nSVM + StandardScaler Pipeline\nAccuracy: High (UCI Iris Dataset)")
-        st.error("❤️ **Heart Disease Predictor**\nMLP Classifier + StandardScaler\nThreshold: 0.4 probability")
+        st.info("🌸 **Iris Species Classifier**\nSVM + StandardScaler Pipeline\nGridSearchCV Hyperparameter Tuning")
+        st.error("❤️ **Heart Disease Predictor**\nMLP Classifier + StandardScaler\n9 fitur klinis, threshold 0.4")
 
     st.markdown("---")
-
     st.subheader("🚀 Getting Started")
     st.write("""
     1. Pilih model dari menu **sidebar** di sebelah kiri
@@ -64,13 +63,17 @@ if select_var == "Home":
     3. Klik tombol **Submit / Predict!**
     4. Hasil prediksi muncul secara instant ✅
     """)
-
-    st.info("💡 Tips: Untuk Iris, pastikan CSV memiliki kolom SepalLengthCm, SepalWidthCm, PetalLengthCm, PetalWidthCm. Untuk Heart Disease, pastikan ada 9 kolom: sex, age, cp, thalach, slope, exang, ca, thal, oldpeak.")
+    st.info("""
+    💡 **Format CSV:**
+    - Iris: kolom `SepalLengthCm, SepalWidthCm, PetalLengthCm, PetalWidthCm`
+    - Heart Disease: kolom `cp, thalach, slope, oldpeak, exang, ca, thal, sex, age`
+    """)
 
 elif select_var == "Iris Species":
     st.title("🌸 Iris Species Prediction")
     st.write("""
-    Prediksi jenis bunga Iris berdasarkan 4 pengukuran morfologi menggunakan **SVM Classifier**.
+    Prediksi jenis bunga Iris berdasarkan 4 pengukuran morfologi menggunakan **SVM Classifier** 
+    dengan **GridSearchCV Hyperparameter Tuning** (Sesi 11 DQLab).
 
     Dataset: [UCI Iris Dataset via Kaggle](https://www.kaggle.com/uciml/iris)
     """)
@@ -100,6 +103,7 @@ elif select_var == "Iris Species":
 
     if button_var:
         df = input_df
+        # Ambil hanya 4 kolom yang dibutuhkan (handle CSV dari Kaggle yang ada kolom Id)
         feature_cols = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']
         df = df[feature_cols]
         st.write("**Input Data:**")
@@ -117,9 +121,10 @@ elif select_var == "Iris Species":
 elif select_var == "Heart Disease":
     st.title("❤️ Heart Disease Risk Prediction")
     st.write("""
-    Prediksi risiko penyakit jantung berdasarkan 9 parameter klinis menggunakan **MLP Classifier**.
+    Prediksi risiko penyakit jantung berdasarkan **9 fitur klinis** menggunakan **MLP Classifier**
+    dengan **GridSearchCV Hyperparameter Tuning** dan analisis ROC (Sesi 13–14 DQLab).
 
-    Dataset: [Heart Disease UCI via Kaggle](https://www.kaggle.com/ronitf/heart-disease-uci) — Threshold probabilitas: **0.4**
+    Dataset: [Heart Disease UCI](https://archive.ics.uci.edu/dataset/45/heart+disease) — Threshold: **0.4**
     """)
 
     st.sidebar.header('User Input Features:')
@@ -129,81 +134,82 @@ elif select_var == "Heart Disease":
     else:
         def user_input_features():
             st.sidebar.header('Input Manual')
+
+            # ✅ Urutan input sesuai Sesi 13: cp, thalach, slope, oldpeak, exang, ca, thal, sex, age
             chest_pain_map = {
-                "Typical Angina": 0,
-                "Atypical Angina": 1,
-                "Non-Anginal Pain": 2,
-                "Asymptomatic": 3
+                "Typical Angina (0)": 0,
+                "Atypical Angina (1)": 1,
+                "Non-Anginal Pain (2)": 2,
+                "Asymptomatic (3)": 3
             }
-            wcp = st.sidebar.selectbox('Chest pain type', options=list(chest_pain_map.keys()), help="Type of chest pain experienced")
+            wcp = st.sidebar.selectbox('Chest Pain Type', options=list(chest_pain_map.keys()), help="Jenis nyeri dada yang dirasakan pasien")
             cp = chest_pain_map[wcp]
 
-            thalach = st.sidebar.number_input('Maximum Heart Rate Achieved', min_value=60, value=150, max_value=220, step=1, help="Maximum heart rate achieved during exercise")
-            slope = st.sidebar.selectbox('Slope of ST Segment', options=[0, 1, 2], index=0, help="Slope of the peak exercise ST segment")
-            oldpeak = st.sidebar.number_input('Oldpeak', min_value=0.0, value=1.0, max_value=6.2, step=0.1, help="ST depression induced by exercise relative to rest")
-            exang = st.sidebar.radio('Exercise Induced Angina', options=['Yes', 'No'], index=0, help="Whether exercise induced angina is present")
-            if exang == 'Yes':
-                exang = 1
-            else:
-                exang = 0
-            ca = st.sidebar.selectbox('Number of Major Vessels', options=[0, 1, 2, 3], index=0, help="Number of major vessels colored by fluoroscopy")
-            thal = st.sidebar.selectbox('Thalassemia', options=[1, 2, 3], index=0, help="Thalassemia result")
-            sex = st.sidebar.radio('Sex', options=['Male', 'Female'], index=0)
-            if sex == "Female":
-                sex = 0
-            else:
-                sex = 1
-            age = st.sidebar.number_input('Age', min_value=29, max_value=77, value=30, step=1, help="Age of the patient in years")
-            
-            data = {'sex': sex,
-                    'age': age,
-                    'cp': cp,
+            thalach = st.sidebar.slider('Maximum Heart Rate Achieved', min_value=71, value=150, max_value=202, help="Detak jantung maksimum saat exercise")
+            slope = st.sidebar.selectbox('Slope of ST Segment', options=[0, 1, 2], index=1, help="Kemiringan segmen ST pada EKG")
+            oldpeak = st.sidebar.slider('Oldpeak (ST Depression)', min_value=0.0, value=1.0, max_value=6.2, step=0.1, help="Seberapa banyak ST segmen menurun")
+            exang = st.sidebar.radio('Exercise Induced Angina', options=['Yes (1)', 'No (0)'], index=1, help="Apakah terjadi angina saat exercise?")
+            exang = 1 if exang == 'Yes (1)' else 0
+            ca = st.sidebar.selectbox('Number of Major Vessels', options=[0, 1, 2, 3], index=0, help="Jumlah pembuluh darah utama (fluoroskopi)")
+            thal = st.sidebar.selectbox('Thalassemia', options=[1, 2, 3], index=0, help="Hasil tes thalium: 1=normal, 2=fixed defect, 3=reversible defect")
+            sex = st.sidebar.radio('Sex', options=['Male (1)', 'Female (0)'], index=0)
+            sex = 1 if sex == 'Male (1)' else 0
+            age = st.sidebar.slider('Age', min_value=29, value=50, max_value=77, step=1, help="Usia pasien")
+
+            # ✅ Urutan dict sesuai training Sesi 13
+            data = {'cp': cp,
                     'thalach': thalach,
                     'slope': slope,
+                    'oldpeak': oldpeak,
                     'exang': exang,
                     'ca': ca,
                     'thal': thal,
-                    'oldpeak': oldpeak}
-            
+                    'sex': sex,
+                    'age': age}
+
             features = pd.DataFrame(data, index=[0])
             return features
-        
+
         input_df = user_input_features()
 
     st.image("https://drramjimehrotra.com/wp-content/uploads/2022/09/Women-Heart-Disease-min-resize.png", width=300)
 
     if st.sidebar.button('Predict!'):
         df = input_df
-        feature_cols = ['sex', 'age', 'cp', 'thalach', 'slope', 'exang', 'ca', 'thal', 'oldpeak']
+
+        # ✅ Urutan feature_cols sesuai Sesi 13
+        feature_cols = ['cp', 'thalach', 'slope', 'oldpeak', 'exang', 'ca', 'thal', 'sex', 'age']
         df = df[feature_cols]
+
         st.write("**Input Data:**")
         st.write(df)
 
-        with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
+        with open("full_heart_disease_pipeline.pkl", 'rb') as file:
             loaded_model = pickle.load(file)
 
         prediction_proba = loaded_model.predict_proba(df.values.astype(float))
+        prob_risk = prediction_proba[:, 1][0]
 
-        if prediction_proba[:, 1][0] >= 0.4:
-            prediction = 1
-        else: 
-            prediction = 0
-        
+        # Threshold 0.4 sesuai analisis ROC Sesi 14
+        prediction = 1 if prob_risk >= 0.4 else 0
         result = 'No Heart Disease Risk' if prediction == 0 else 'Heart Disease Risk Detected'
-        
+
         st.subheader('Prediction Result:')
         with st.spinner('Analyzing...'):
             time.sleep(2)
             if result == "No Heart Disease Risk":
-                st.success(f"✅ Prediction: **{result}**")
+                st.success(f"✅ **{result}**")
             else:
-                st.error(f"⚠️ Prediction: **{result}**")
-                st.info("Please consult a doctor for further evaluation and advice.")
+                st.error(f"⚠️ **{result}**")
+                st.info("Harap konsultasikan hasil ini dengan dokter untuk evaluasi lebih lanjut.")
             st.metric(
                 label="Probability of Heart Disease Risk",
-                value="{:.1f}%".format(prediction_proba[:, 1][0] * 100)
+                value="{:.1f}%".format(prob_risk * 100),
+                delta="Above threshold (40%)" if prob_risk >= 0.4 else "Below threshold (40%)",
+                delta_color="inverse"
             )
 
+# Footer sidebar
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Ahmad Ihsan Fuady**")
 st.sidebar.markdown("[![GitHub](https://img.shields.io/badge/GitHub-aifosze-181717?logo=github)](https://github.com/aifosze) [![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?logo=linkedin)](https://linkedin.com/in/ahmadihsanfuady)")
