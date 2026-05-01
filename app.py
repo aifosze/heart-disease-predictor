@@ -168,7 +168,7 @@ elif select_var == "Heart Disease":  # ✅ Fix 1: ganti 'if' jadi 'elif'
         with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
             loaded_model = pickle.load(file)
             
-    if st.sidebar.button('Predict!'):
+    if st.sidebar.button('Predict!', key='heart_predict'):
         df = input_df
         
         # ✅ Tambahkan ini: pilih hanya 9 kolom yang dibutuhkan model
