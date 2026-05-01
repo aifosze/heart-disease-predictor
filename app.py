@@ -168,7 +168,7 @@ elif select_var == "Heart Disease":  # ✅ Fix 1: ganti 'if' jadi 'elif'
         with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
             loaded_model = pickle.load(file)
 
-        prediction_proba = loaded_model.predict_proba(df.values)
+        prediction_proba = loaded_model.predict_proba(df.values.astype(float))
         if prediction_proba[:, 1] >= 0.4:
             prediction = 1
         else: 
