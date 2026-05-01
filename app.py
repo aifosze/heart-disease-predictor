@@ -4,12 +4,12 @@ import pandas as pd
 import time
 
 st.set_page_config(page_title="ML Portfolio", page_icon="🌸", layout="wide", initial_sidebar_state="expanded")
-st.write("Welcome to my ML Portfolio!")
 
 select_var = st.sidebar.selectbox("Select page", ["Home", "Iris Species", "Heart Disease"])
 
 if select_var == "Home":
     st.title("🌸 Welcome to ML Portfolio")
+    st.write("Welcome to my ML Portfolio!")  # ✅ Fix 3: dipindah ke dalam Home saja
     
     st.markdown("---")
     
@@ -70,19 +70,19 @@ elif select_var == "Iris Species":
     st.sidebar.header('User Input Features:')
     uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
     if uploaded_file is not None:
-            input_df = pd.read_csv(uploaded_file) ## convert to dataframe
+        input_df = pd.read_csv(uploaded_file)
     else:
         def user_input_features():
             st.sidebar.header('Input Manual')
             SepalLengthCm = st.sidebar.slider('Sepal Length (cm)', min_value=4.3, value=6.5, max_value=10.0)
             SepalWidthCm = st.sidebar.slider('Sepal Width (cm)', min_value=2.0, value=3.3, max_value=5.0)
-            PetalLengthCm = st.sidebar.slider('Petal Length (cm)',min_value= 1.0, value=4.5, max_value=9.0)
-            PetalWidthCm = st.sidebar.slider('Petal Width (cm)',min_value= 0.1, value=1.4, max_value=5.0)
+            PetalLengthCm = st.sidebar.slider('Petal Length (cm)', min_value=1.0, value=4.5, max_value=9.0)
+            PetalWidthCm = st.sidebar.slider('Petal Width (cm)', min_value=0.1, value=1.4, max_value=5.0)
             data = {'SepalLengthCm': SepalLengthCm,
                     'SepalWidthCm': SepalWidthCm,
                     'PetalLengthCm': PetalLengthCm,
                     'PetalWidthCm': PetalWidthCm}
-            features = pd.DataFrame(data, index=[0]) #convert to dataframe
+            features = pd.DataFrame(data, index=[0])
             return features
         input_df = user_input_features()
 
@@ -93,19 +93,19 @@ elif select_var == "Iris Species":
     if button_var:
         df = input_df
         feature_cols = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']
-        df = df[feature_cols]
+        df = df[feature_cols]  # ✅ Fix: ambil 4 kolom saja (buang kolom Id jika ada)
         st.write(df)
-    
+
         with open("generate_iris.pkl", 'rb') as file:
             loaded_model = pickle.load(file)
-            prediction = loaded_model.predict(df.values)
-            result = 'Iris-setosa' if prediction[0] == 0 else ('Iris-versicolor' if prediction[0] == 1 else 'Iris-virginica')
+            prediction = loaded_model.predict(df.values)  # ✅ Fix: pakai .values
+            result = 'Iris-setosa' if prediction[0] == 0 else ('Iris-versicolor' if prediction[0] == 1 else 'Iris-virginica')  # ✅ Fix: prediction[0]
             st.subheader('Prediction: ')
             with st.spinner('Wait for it...'):
                 time.sleep(4)
                 st.success(f"Prediction of this app is {result}")
 
-if select_var == "Heart Disease":   
+elif select_var == "Heart Disease":  # ✅ Fix 1: ganti 'if' jadi 'elif'
     st.write("""
     This app predicts the **Heart Disease**
 
@@ -114,7 +114,7 @@ if select_var == "Heart Disease":
     st.sidebar.header('User Input Features:')
     uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
     if uploaded_file is not None:
-            input_df = pd.read_csv(uploaded_file) ## convert to dataframe
+        input_df = pd.read_csv(uploaded_file)
     else:
         def user_input_features():
             st.sidebar.header('Input Manual')
@@ -137,11 +137,11 @@ if select_var == "Heart Disease":
                 exang = 0
             ca = st.sidebar.selectbox('Number of Major Vessels', options=[0, 1, 2, 3], index=0, help="Number of major vessels colored by fluoroscopy")
             thal = st.sidebar.selectbox('Thalassemia', options=[1, 2, 3], index=0, help="Thalassemia result")
-            sex= st.sidebar.radio('Sex', options=['Male', 'Female'], index=0)
-            if sex=="Female":
-                sex=0
-            else :
-                sex=1
+            sex = st.sidebar.radio('Sex', options=['Male', 'Female'], index=0)
+            if sex == "Female":
+                sex = 0
+            else:
+                sex = 1
             age = st.sidebar.number_input('Age', min_value=29, max_value=77, value=30, step=1, help="Age of the patient in years")
             
             data = {'sex': sex,
@@ -154,35 +154,35 @@ if select_var == "Heart Disease":
                     'thal': thal,
                     'oldpeak': oldpeak}
             
-            # Create a DataFrame from the input data
             features = pd.DataFrame(data, index=[0])
             return features
         
         input_df = user_input_features()
-        st.image("https://drramjimehrotra.com/wp-content/uploads/2022/09/Women-Heart-Disease-min-resize.png", width=300)
 
-        if st.sidebar.button('Predict!'):
-            df= input_df
-            st.write(df)
-            with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
-                loaded_model = pickle.load(file)
+    # ✅ Fix 2: image dan tombol Predict dipindah ke luar blok else
+    st.image("https://drramjimehrotra.com/wp-content/uploads/2022/09/Women-Heart-Disease-min-resize.png", width=300)
 
-            prediction_proba = loaded_model.predict_proba(df)
-            if prediction_proba[:,1] >= 0.4:
-                prediction = 1
-            else: 
-                prediction = 0
-            
-            result = ['No Heart Disease Risk' if prediction == 0 else 'Heart Disease Risk Detected']
-            
-            # Print the prediction result
-            st.subheader('Prediction: ')
-            output = str(result[0])
-            with st.spinner('Wait for it...'):
-                time.sleep(4)
-                if output == "No Heart Disease Risk":
-                    st.success(f"Prediction : {output}")
-                if output == "Heart Disease Risk Detected":
-                    st.error(f"Prediction : {output}")
-                    st.info("Please consult a doctor for further evaluation and advice.")
-                st.write("Probability of Heart Disease Risk: {:.2f}%".format(prediction_proba[:,1][0] * 100))
+    if st.sidebar.button('Predict!'):
+        df = input_df
+        st.write(df)
+        with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
+            loaded_model = pickle.load(file)
+
+        prediction_proba = loaded_model.predict_proba(df)
+        if prediction_proba[:, 1] >= 0.4:
+            prediction = 1
+        else: 
+            prediction = 0
+        
+        result = ['No Heart Disease Risk' if prediction == 0 else 'Heart Disease Risk Detected']
+        
+        st.subheader('Prediction: ')
+        output = str(result[0])
+        with st.spinner('Wait for it...'):
+            time.sleep(4)
+            if output == "No Heart Disease Risk":
+                st.success(f"Prediction : {output}")
+            if output == "Heart Disease Risk Detected":
+                st.error(f"Prediction : {output}")
+                st.info("Please consult a doctor for further evaluation and advice.")
+            st.write("Probability of Heart Disease Risk: {:.2f}%".format(prediction_proba[:, 1][0] * 100))
