@@ -97,7 +97,7 @@ elif select_var == "Iris Species":
         with open("generate_iris.pkl", 'rb') as file:  
             loaded_model = pickle.load(file) # load previous trained model
             prediction = loaded_model.predict(df) # do prediction according to input value
-            result = ['Iris-setosa' if prediction == 0 else ('Iris-versicolor' if prediction == 1 else 'Iris-virginica')]
+            result = ['Iris-setosa' if prediction[0] == 0 else ('Iris-versicolor' if prediction[0] == 1 else 'Iris-virginica')]
             output = result[0]  
             st.subheader('Prediction: ')
             with st.spinner('Wait for it...'):
