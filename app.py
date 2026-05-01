@@ -91,19 +91,19 @@ elif select_var == "Iris Species":
     st.image("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png", width=500)
 
     if button_var:
-            df = input_df
-            feature_cols = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']
-            df = df[feature_cols]
-            st.write(df)
+        df = input_df
+        feature_cols = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']
+        df = df[feature_cols]
+        st.write(df)
     
-            with open("generate_iris.pkl", 'rb') as file:
-                loaded_model = pickle.load(file)
-                prediction = loaded_model.predict(df.values)
-                result = 'Iris-setosa' if prediction[0] == 0 else ('Iris-versicolor' if prediction[0] == 1 else 'Iris-virginica')
-                st.subheader('Prediction: ')
-                with st.spinner('Wait for it...'):
-                    time.sleep(4)
-                    st.success(f"Prediction of this app is {result}")
+        with open("generate_iris.pkl", 'rb') as file:
+            loaded_model = pickle.load(file)
+            prediction = loaded_model.predict(df.values)
+            result = 'Iris-setosa' if prediction[0] == 0 else ('Iris-versicolor' if prediction[0] == 1 else 'Iris-virginica')
+            st.subheader('Prediction: ')
+            with st.spinner('Wait for it...'):
+                time.sleep(4)
+                st.success(f"Prediction of this app is {result}")
 
 if select_var == "Heart Disease":   
     st.write("""
