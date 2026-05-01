@@ -75,8 +75,23 @@ elif select_var == "Iris Species":
     Prediksi jenis bunga Iris berdasarkan 4 pengukuran morfologi menggunakan **SVM Classifier** 
     dengan **GridSearchCV Hyperparameter Tuning** (Sesi 11 DQLab).
 
-    Dataset: [UCI Iris Dataset via Kaggle](https://www.kaggle.com/uciml/iris)
+    Dataset: [UCI Iris Dataset via Kaggle](https://www.kaggle.com/uciml/iris) — 150 sampel, 3 kelas, 4 fitur numerik
     """)
+
+    # Dataset feature info
+    with st.expander("ℹ️ Tentang Fitur Dataset Iris (UCI)"):
+        st.markdown("""
+        | Fitur | Deskripsi | Range |
+        |-------|-----------|-------|
+        | **SepalLengthCm** | Panjang sepal (kelopak luar pelindung bunga) dalam cm | 4.3 – 7.9 cm |
+        | **SepalWidthCm** | Lebar sepal dalam cm | 2.0 – 4.4 cm |
+        | **PetalLengthCm** | Panjang petal (kelopak bunga berwarna bagian dalam) dalam cm | 1.0 – 6.9 cm |
+        | **PetalWidthCm** | Lebar petal dalam cm | 0.1 – 2.5 cm |
+        
+        **Target kelas:** Iris-setosa (0) · Iris-versicolor (1) · Iris-virginica (2)
+        
+        💡 *Petal features terbukti lebih diskriminatif daripada Sepal features dalam membedakan ketiga spesies.*
+        """)
 
     st.sidebar.header('User Input Features:')
     uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
@@ -85,10 +100,26 @@ elif select_var == "Iris Species":
     else:
         def user_input_features():
             st.sidebar.header('Input Manual')
-            SepalLengthCm = st.sidebar.slider('Sepal Length (cm)', min_value=4.3, value=6.5, max_value=10.0)
-            SepalWidthCm = st.sidebar.slider('Sepal Width (cm)', min_value=2.0, value=3.3, max_value=5.0)
-            PetalLengthCm = st.sidebar.slider('Petal Length (cm)', min_value=1.0, value=4.5, max_value=9.0)
-            PetalWidthCm = st.sidebar.slider('Petal Width (cm)', min_value=0.1, value=1.4, max_value=5.0)
+            SepalLengthCm = st.sidebar.slider(
+                'Sepal Length (cm)',
+                min_value=4.3, value=6.5, max_value=7.9,
+                help="Panjang kelopak luar (sepal) bunga Iris dalam sentimeter. Range: 4.3–7.9 cm"
+            )
+            SepalWidthCm = st.sidebar.slider(
+                'Sepal Width (cm)',
+                min_value=2.0, value=3.3, max_value=4.4,
+                help="Lebar kelopak luar (sepal) bunga Iris dalam sentimeter. Range: 2.0–4.4 cm"
+            )
+            PetalLengthCm = st.sidebar.slider(
+                'Petal Length (cm)',
+                min_value=1.0, value=4.5, max_value=6.9,
+                help="Panjang kelopak dalam berwarna (petal) bunga Iris dalam sentimeter. Range: 1.0–6.9 cm"
+            )
+            PetalWidthCm = st.sidebar.slider(
+                'Petal Width (cm)',
+                min_value=0.1, value=1.4, max_value=2.5,
+                help="Lebar kelopak dalam berwarna (petal) bunga Iris dalam sentimeter. Range: 0.1–2.5 cm"
+            )
             data = {'SepalLengthCm': SepalLengthCm,
                     'SepalWidthCm': SepalWidthCm,
                     'PetalLengthCm': PetalLengthCm,
@@ -103,7 +134,6 @@ elif select_var == "Iris Species":
 
     if button_var:
         df = input_df
-        # Ambil hanya 4 kolom yang dibutuhkan (handle CSV dari Kaggle yang ada kolom Id)
         feature_cols = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']
         df = df[feature_cols]
         st.write("**Input Data:**")
@@ -122,10 +152,28 @@ elif select_var == "Heart Disease":
     st.title("❤️ Heart Disease Risk Prediction")
     st.write("""
     Prediksi risiko penyakit jantung berdasarkan **9 fitur klinis** menggunakan **MLP Classifier**
-    dengan **GridSearchCV Hyperparameter Tuning** dan analisis ROC (Sesi 13–14 DQLab).
+    dengan **GridSearchCV Hyperparameter Tuning** dan analisis ROC threshold (Sesi 13–14 DQLab).
 
-    Dataset: [Heart Disease UCI](https://archive.ics.uci.edu/dataset/45/heart+disease) — Threshold: **0.4**
+    Dataset: [Heart Disease UCI](https://archive.ics.uci.edu/dataset/45/heart+disease) — 303 sampel, threshold probabilitas: **0.4**
     """)
+
+    # Dataset feature info — corrected per UCI documentation
+    with st.expander("ℹ️ Tentang Fitur Dataset Heart Disease (UCI) — 9 Fitur Terpilih"):
+        st.markdown("""
+        | Fitur | Deskripsi | Nilai |
+        |-------|-----------|-------|
+        | **cp** | Chest Pain Type — jenis nyeri dada | 0=Typical Angina · 1=Atypical Angina · 2=Non-Anginal Pain · 3=Asymptomatic |
+        | **thalach** | Maximum Heart Rate Achieved — detak jantung maksimum saat tes | 71 – 202 bpm |
+        | **slope** | Slope of Peak Exercise ST Segment — kemiringan segmen ST di EKG | 0=Upsloping · 1=Flat · 2=Downsloping |
+        | **oldpeak** | ST Depression — penurunan segmen ST akibat exercise vs istirahat | 0.0 – 6.2 |
+        | **exang** | Exercise Induced Angina — nyeri dada saat olahraga | 0=Tidak · 1=Ya |
+        | **ca** | Number of Major Vessels — jumlah pembuluh darah utama (fluoroskopi) | 0 · 1 · 2 · 3 |
+        | **thal** | Thalassemia — hasil tes thalium jantung | 1=Normal · 2=Fixed Defect · 3=Reversible Defect |
+        | **sex** | Jenis kelamin pasien | 0=Female · 1=Male |
+        | **age** | Usia pasien dalam tahun | 29 – 77 tahun |
+        
+        💡 *Fitur terpilih berdasarkan analisis korelasi Sesi 13: cp, thalach, slope berkorelasi positif kuat; oldpeak, exang, ca, thal, sex, age berkorelasi cukup kuat dengan target.*
+        """)
 
     st.sidebar.header('User Input Features:')
     uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
@@ -135,28 +183,88 @@ elif select_var == "Heart Disease":
         def user_input_features():
             st.sidebar.header('Input Manual')
 
-            # ✅ Urutan input sesuai Sesi 13: cp, thalach, slope, oldpeak, exang, ca, thal, sex, age
+            # cp: 0–3 per UCI documentation (bukan 1–4)
             chest_pain_map = {
-                "Typical Angina (0)": 0,
-                "Atypical Angina (1)": 1,
-                "Non-Anginal Pain (2)": 2,
-                "Asymptomatic (3)": 3
+                "0 — Typical Angina": 0,
+                "1 — Atypical Angina": 1,
+                "2 — Non-Anginal Pain": 2,
+                "3 — Asymptomatic": 3
             }
-            wcp = st.sidebar.selectbox('Chest Pain Type', options=list(chest_pain_map.keys()), help="Jenis nyeri dada yang dirasakan pasien")
+            wcp = st.sidebar.selectbox(
+                'Chest Pain Type (cp)',
+                options=list(chest_pain_map.keys()),
+                help="Jenis nyeri dada. Typical Angina = nyeri terkait jantung saat aktivitas; Asymptomatic = tidak ada nyeri meski ada masalah jantung"
+            )
             cp = chest_pain_map[wcp]
 
-            thalach = st.sidebar.slider('Maximum Heart Rate Achieved', min_value=71, value=150, max_value=202, help="Detak jantung maksimum saat exercise")
-            slope = st.sidebar.selectbox('Slope of ST Segment', options=[0, 1, 2], index=1, help="Kemiringan segmen ST pada EKG")
-            oldpeak = st.sidebar.slider('Oldpeak (ST Depression)', min_value=0.0, value=1.0, max_value=6.2, step=0.1, help="Seberapa banyak ST segmen menurun")
-            exang = st.sidebar.radio('Exercise Induced Angina', options=['Yes (1)', 'No (0)'], index=1, help="Apakah terjadi angina saat exercise?")
-            exang = 1 if exang == 'Yes (1)' else 0
-            ca = st.sidebar.selectbox('Number of Major Vessels', options=[0, 1, 2, 3], index=0, help="Jumlah pembuluh darah utama (fluoroskopi)")
-            thal = st.sidebar.selectbox('Thalassemia', options=[1, 2, 3], index=0, help="Hasil tes thalium: 1=normal, 2=fixed defect, 3=reversible defect")
-            sex = st.sidebar.radio('Sex', options=['Male (1)', 'Female (0)'], index=0)
-            sex = 1 if sex == 'Male (1)' else 0
-            age = st.sidebar.slider('Age', min_value=29, value=50, max_value=77, step=1, help="Usia pasien")
+            thalach = st.sidebar.slider(
+                'Max Heart Rate Achieved (thalach)',
+                min_value=71, value=150, max_value=202,
+                help="Detak jantung maksimum yang tercapai saat tes exercise (bpm). Sumber: UCI Heart Disease Dataset"
+            )
 
-            # ✅ Urutan dict sesuai training Sesi 13
+            # slope: 0=Upsloping, 1=Flat, 2=Downsloping per UCI documentation
+            slope_map = {
+                "0 — Upsloping (ST naik)": 0,
+                "1 — Flat (ST datar)": 1,
+                "2 — Downsloping (ST turun)": 2
+            }
+            wslope = st.sidebar.selectbox(
+                'Slope of ST Segment (slope)',
+                options=list(slope_map.keys()),
+                index=1,
+                help="Kemiringan segmen ST pada EKG saat puncak exercise. Downsloping = indikator risiko lebih tinggi"
+            )
+            slope = slope_map[wslope]
+
+            oldpeak = st.sidebar.slider(
+                'ST Depression (oldpeak)',
+                min_value=0.0, value=1.0, max_value=6.2, step=0.1,
+                help="Penurunan segmen ST akibat exercise dibandingkan kondisi istirahat. Nilai tinggi = risiko lebih besar"
+            )
+
+            exang_map = {"0 — Tidak (No)": 0, "1 — Ya (Yes)": 1}
+            wexang = st.sidebar.selectbox(
+                'Exercise Induced Angina (exang)',
+                options=list(exang_map.keys()),
+                help="Apakah terjadi nyeri dada (angina) saat exercise? Ya = faktor risiko penyakit jantung"
+            )
+            exang = exang_map[wexang]
+
+            ca = st.sidebar.selectbox(
+                'Number of Major Vessels (ca)',
+                options=[0, 1, 2, 3],
+                help="Jumlah pembuluh darah utama yang terlihat via fluoroskopi (0–3). Makin banyak = kondisi jantung lebih buruk"
+            )
+
+            # thal: 1=Normal, 2=Fixed Defect, 3=Reversible Defect per UCI documentation
+            thal_map = {
+                "1 — Normal": 1,
+                "2 — Fixed Defect": 2,
+                "3 — Reversible Defect": 3
+            }
+            wthal = st.sidebar.selectbox(
+                'Thalassemia (thal)',
+                options=list(thal_map.keys()),
+                help="Hasil tes thalium untuk memeriksa aliran darah jantung. Fixed Defect = kerusakan permanen; Reversible = muncul saat stress"
+            )
+            thal = thal_map[wthal]
+
+            sex_map = {"0 — Female (Perempuan)": 0, "1 — Male (Laki-laki)": 1}
+            wsex = st.sidebar.selectbox(
+                'Sex (sex)',
+                options=list(sex_map.keys()),
+                help="Jenis kelamin pasien. Laki-laki memiliki risiko penyakit jantung lebih tinggi secara statistik"
+            )
+            sex = sex_map[wsex]
+
+            age = st.sidebar.slider(
+                'Age (age)',
+                min_value=29, value=50, max_value=77, step=1,
+                help="Usia pasien dalam tahun. Range dataset: 29–77 tahun"
+            )
+
+            # Urutan sesuai Sesi 13: cp, thalach, slope, oldpeak, exang, ca, thal, sex, age
             data = {'cp': cp,
                     'thalach': thalach,
                     'slope': slope,
@@ -177,7 +285,7 @@ elif select_var == "Heart Disease":
     if st.sidebar.button('Predict!'):
         df = input_df
 
-        # ✅ Urutan feature_cols sesuai Sesi 13
+        # Urutan sesuai training Sesi 13
         feature_cols = ['cp', 'thalach', 'slope', 'oldpeak', 'exang', 'ca', 'thal', 'sex', 'age']
         df = df[feature_cols]
 
