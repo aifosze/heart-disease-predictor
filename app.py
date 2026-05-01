@@ -9,7 +9,7 @@ select_var = st.sidebar.selectbox("Select page", ["Home", "Iris Species", "Heart
 
 if select_var == "Home":
     st.title("🌸 Welcome to ML Portfolio")
-    st.write("Welcome to my ML Portfolio!")  # ✅ Fix 3: dipindah ke dalam Home saja
+    st.write("Welcome to my ML Portfolio!")
     
     st.markdown("---")
     
@@ -93,19 +93,19 @@ elif select_var == "Iris Species":
     if button_var:
         df = input_df
         feature_cols = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']
-        df = df[feature_cols]  # ✅ Fix: ambil 4 kolom saja (buang kolom Id jika ada)
+        df = df[feature_cols]
         st.write(df)
 
         with open("generate_iris.pkl", 'rb') as file:
             loaded_model = pickle.load(file)
-            prediction = loaded_model.predict(df.values)  # ✅ Fix: pakai .values
-            result = 'Iris-setosa' if prediction[0] == 0 else ('Iris-versicolor' if prediction[0] == 1 else 'Iris-virginica')  # ✅ Fix: prediction[0]
+            prediction = loaded_model.predict(df.values)
+            result = 'Iris-setosa' if prediction[0] == 0 else ('Iris-versicolor' if prediction[0] == 1 else 'Iris-virginica')
             st.subheader('Prediction: ')
             with st.spinner('Wait for it...'):
                 time.sleep(4)
                 st.success(f"Prediction of this app is {result}")
 
-elif select_var == "Heart Disease":  # ✅ Fix 1: ganti 'if' jadi 'elif'
+elif select_var == "Heart Disease":
     st.write("""
     This app predicts the **Heart Disease**
 
@@ -159,41 +159,32 @@ elif select_var == "Heart Disease":  # ✅ Fix 1: ganti 'if' jadi 'elif'
         
         input_df = user_input_features()
 
-    # ✅ Fix 2: image dan tombol Predict dipindah ke luar blok else
     st.image("https://drramjimehrotra.com/wp-content/uploads/2022/09/Women-Heart-Disease-min-resize.png", width=300)
 
     if st.sidebar.button('Predict!'):
         df = input_df
-        st.write(df)
-        with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
-            loaded_model = pickle.load(file)
-            
-    if st.sidebar.button('Predict!', key='heart_predict'):
-        df = input_df
-        
-        # ✅ Tambahkan ini: pilih hanya 9 kolom yang dibutuhkan model
         feature_cols = ['sex', 'age', 'cp', 'thalach', 'slope', 'exang', 'ca', 'thal', 'oldpeak']
         df = df[feature_cols]
-        
         st.write(df)
+
         with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
             loaded_model = pickle.load(file)
-    
+
         prediction_proba = loaded_model.predict_proba(df.values.astype(float))
-        if prediction_proba[:, 1] >= 0.4:
+
+        if prediction_proba[:, 1][0] >= 0.4:
             prediction = 1
         else: 
             prediction = 0
         
-        result = ['No Heart Disease Risk' if prediction == 0 else 'Heart Disease Risk Detected']
+        result = 'No Heart Disease Risk' if prediction == 0 else 'Heart Disease Risk Detected'
         
         st.subheader('Prediction: ')
-        output = str(result[0])
         with st.spinner('Wait for it...'):
             time.sleep(4)
-            if output == "No Heart Disease Risk":
-                st.success(f"Prediction : {output}")
-            if output == "Heart Disease Risk Detected":
-                st.error(f"Prediction : {output}")
+            if result == "No Heart Disease Risk":
+                st.success(f"Prediction : {result}")
+            else:
+                st.error(f"Prediction : {result}")
                 st.info("Please consult a doctor for further evaluation and advice.")
             st.write("Probability of Heart Disease Risk: {:.2f}%".format(prediction_proba[:, 1][0] * 100))
