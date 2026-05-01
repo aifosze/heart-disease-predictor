@@ -168,9 +168,17 @@ elif select_var == "Heart Disease":  # ✅ Fix 1: ganti 'if' jadi 'elif'
         with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
             loaded_model = pickle.load(file)
             
-        st.write("df type:", type(df))
-        st.write("df shape:", df.shape)
-        st.write("df dtypes:", df.dtypes)
+    if st.sidebar.button('Predict!'):
+        df = input_df
+        
+        # ✅ Tambahkan ini: pilih hanya 9 kolom yang dibutuhkan model
+        feature_cols = ['sex', 'age', 'cp', 'thalach', 'slope', 'exang', 'ca', 'thal', 'oldpeak']
+        df = df[feature_cols]
+        
+        st.write(df)
+        with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
+            loaded_model = pickle.load(file)
+    
         prediction_proba = loaded_model.predict_proba(df.values.astype(float))
         if prediction_proba[:, 1] >= 0.4:
             prediction = 1
