@@ -3,68 +3,76 @@ import pickle
 import pandas as pd 
 import time
 
-st.set_page_config(page_title="ML Portfolio", page_icon="🌸", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="ML Portfolio | Ahmad Ihsan Fuady", page_icon="🤖", layout="wide", initial_sidebar_state="expanded")
 
 select_var = st.sidebar.selectbox("Select page", ["Home", "Iris Species", "Heart Disease"])
 
 if select_var == "Home":
-    st.title("🌸 Welcome to ML Portfolio")
-    st.write("Welcome to my ML Portfolio!")
-    
+    st.title("🤖 ML Portfolio — Ahmad Ihsan Fuady")
+    st.markdown("**Information Systems Graduate · Data Science Enthusiast · Telkomsel**")
+
     st.markdown("---")
-    
-    col1, col2 = st.columns(2)
-    
+
+    col1, col2 = st.columns([2, 1])
+
     with col1:
-        st.subheader("About This App")
+        st.subheader("👋 About Me")
         st.write("""
-        Selamat datang di **ML Portfolio** saya! 
-        
-        Aplikasi ini mendemonstrasikan penggunaan **Machine Learning** 
-        untuk klasifikasi data real-world menggunakan dataset terkenal seperti Iris.
+        Hi! Saya **Ahmad Ihsan Fuady**, lulusan Sistem Informasi Universitas Telkom Surabaya 
+        dengan IPK 3.78 (Cumlaude). Saat ini bekerja di divisi **Mobile Broadband Assurance** 
+        Telkomsel sambil aktif mengembangkan kompetensi di bidang **Data Science & Machine Learning**.
+
+        Portofolio ini mendemonstrasikan implementasi ML untuk klasifikasi data nyata — 
+        mulai dari dataset klasik Iris hingga prediksi risiko penyakit jantung.
         """)
-    
+
+        st.subheader("🏆 Highlights")
+        st.write("""
+        - 📄 Publikasi **Scopus-indexed** IEEE ICITISEE 2022 (Lean-UX Mobile App Research)
+        - 📄 Dua publikasi jurnal Sinta 3 (SISTEMASI 2023, JIPI 2025 — K-Means clustering)
+        - 🎓 Bangkit Academy ML Path — K-Means + Random Forest capstone
+        - 💼 Data Science Virtual Internship — ID/X Partners via Rakamin (AUC-ROC 0.71)
+        - 👨‍🏫 Teaching Assistant Big Data Analytics — Telkom University Surabaya
+        """)
+
+        st.subheader("🛠️ Tech Stack")
+        st.write("`Python` `Scikit-learn` `Pandas` `Streamlit` `TensorFlow` `Gephi` `SQL`")
+
+        st.markdown("---")
+        st.subheader("🔗 Connect with Me")
+        col_gh, col_li = st.columns(2)
+        with col_gh:
+            st.markdown("[![GitHub](https://img.shields.io/badge/GitHub-aifosze-181717?style=for-the-badge&logo=github)](https://github.com/aifosze)")
+        with col_li:
+            st.markdown("[![LinkedIn](https://img.shields.io/badge/LinkedIn-Ahmad%20Ihsan%20Fuady-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/ahmadihsanfuady)")
+
     with col2:
-        st.image("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png", width=300)
-    
+        st.image("https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Machine+Learning+R/iris-machinelearning.png", width=280)
+        st.markdown("---")
+        st.subheader("📊 Models in This App")
+        st.info("🌸 **Iris Species Classifier**\nSVM + StandardScaler Pipeline\nAccuracy: High (UCI Iris Dataset)")
+        st.error("❤️ **Heart Disease Predictor**\nMLP Classifier + StandardScaler\nThreshold: 0.4 probability")
+
     st.markdown("---")
-    
-    st.subheader("📊 Available Features")
-    
-    features = {
-        "🔍 Iris Species Prediction": "Prediksi jenis Iris berdasarkan karakteristik bunga (Sepal & Petal measurements)",
-        "❤️ Heart Disease Prediction": "Prediksi risiko penyakit jantung berdasarkan parameter kesehatan",
-        "📤 CSV Upload Support": "Upload file CSV dengan data Anda sendiri untuk batch prediction",
-        "🎚️ Interactive Sliders": "Gunakan slider untuk input data secara manual",
-        "⚡ Real-time Results": "Dapatkan hasil prediksi secara instant"
-    }
-    
-    for feature, description in features.items():
-        st.write(f"**{feature}**")
-        st.write(f"→ {description}")
-        st.write("")
-    
-    st.markdown("---")
-    
+
     st.subheader("🚀 Getting Started")
     st.write("""
-    1. Pilih model dari menu sidebar
-    2. Input data Anda:
-       - **Upload CSV**: Upload file dataset Anda
-       - **Manual Input**: Gunakan slider untuk input data
-    3. Klik tombol **"Submit"** untuk prediksi
-    4. Lihat hasil prediksi secara instant!
+    1. Pilih model dari menu **sidebar** di sebelah kiri
+    2. Input data:
+       - **Upload CSV** — batch prediction dengan dataset Anda
+       - **Manual Input** — gunakan slider/input untuk satu prediksi
+    3. Klik tombol **Submit / Predict!**
+    4. Hasil prediksi muncul secara instant ✅
     """)
-    
-    st.markdown("---")
-    
-    st.info("💡 Tips: Setiap model telah dilatih dengan dataset yang relevan untuk memberikan prediksi akurat")
+
+    st.info("💡 Tips: Untuk Iris, pastikan CSV memiliki kolom SepalLengthCm, SepalWidthCm, PetalLengthCm, PetalWidthCm. Untuk Heart Disease, pastikan ada 9 kolom: sex, age, cp, thalach, slope, exang, ca, thal, oldpeak.")
 
 elif select_var == "Iris Species":
+    st.title("🌸 Iris Species Prediction")
     st.write("""
-    This app predicts the **Iris Species**
+    Prediksi jenis bunga Iris berdasarkan 4 pengukuran morfologi menggunakan **SVM Classifier**.
 
-    Data obtained from the [iris dataset](https://www.kaggle.com/uciml/iris) by UCIML. 
+    Dataset: [UCI Iris Dataset via Kaggle](https://www.kaggle.com/uciml/iris)
     """)
 
     st.sidebar.header('User Input Features:')
@@ -94,23 +102,26 @@ elif select_var == "Iris Species":
         df = input_df
         feature_cols = ['SepalLengthCm', 'SepalWidthCm', 'PetalLengthCm', 'PetalWidthCm']
         df = df[feature_cols]
+        st.write("**Input Data:**")
         st.write(df)
 
         with open("generate_iris.pkl", 'rb') as file:
             loaded_model = pickle.load(file)
             prediction = loaded_model.predict(df.values)
             result = 'Iris-setosa' if prediction[0] == 0 else ('Iris-versicolor' if prediction[0] == 1 else 'Iris-virginica')
-            st.subheader('Prediction: ')
-            with st.spinner('Wait for it...'):
-                time.sleep(4)
-                st.success(f"Prediction of this app is {result}")
+            st.subheader('Prediction Result:')
+            with st.spinner('Analyzing...'):
+                time.sleep(2)
+                st.success(f"🌸 Predicted Species: **{result}**")
 
 elif select_var == "Heart Disease":
+    st.title("❤️ Heart Disease Risk Prediction")
     st.write("""
-    This app predicts the **Heart Disease**
+    Prediksi risiko penyakit jantung berdasarkan 9 parameter klinis menggunakan **MLP Classifier**.
 
-    Data obtained from the [heart disease dataset](https://www.kaggle.com/ronitf/heart-disease-uci) by Ronit Fartaria. 
+    Dataset: [Heart Disease UCI via Kaggle](https://www.kaggle.com/ronitf/heart-disease-uci) — Threshold probabilitas: **0.4**
     """)
+
     st.sidebar.header('User Input Features:')
     uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
     if uploaded_file is not None:
@@ -165,6 +176,7 @@ elif select_var == "Heart Disease":
         df = input_df
         feature_cols = ['sex', 'age', 'cp', 'thalach', 'slope', 'exang', 'ca', 'thal', 'oldpeak']
         df = df[feature_cols]
+        st.write("**Input Data:**")
         st.write(df)
 
         with open("full_heart_disease_pipeline.pkl", 'rb') as file:  
@@ -179,12 +191,19 @@ elif select_var == "Heart Disease":
         
         result = 'No Heart Disease Risk' if prediction == 0 else 'Heart Disease Risk Detected'
         
-        st.subheader('Prediction: ')
-        with st.spinner('Wait for it...'):
-            time.sleep(4)
+        st.subheader('Prediction Result:')
+        with st.spinner('Analyzing...'):
+            time.sleep(2)
             if result == "No Heart Disease Risk":
-                st.success(f"Prediction : {result}")
+                st.success(f"✅ Prediction: **{result}**")
             else:
-                st.error(f"Prediction : {result}")
+                st.error(f"⚠️ Prediction: **{result}**")
                 st.info("Please consult a doctor for further evaluation and advice.")
-            st.write("Probability of Heart Disease Risk: {:.2f}%".format(prediction_proba[:, 1][0] * 100))
+            st.metric(
+                label="Probability of Heart Disease Risk",
+                value="{:.1f}%".format(prediction_proba[:, 1][0] * 100)
+            )
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("**Ahmad Ihsan Fuady**")
+st.sidebar.markdown("[![GitHub](https://img.shields.io/badge/GitHub-aifosze-181717?logo=github)](https://github.com/aifosze) [![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?logo=linkedin)](https://linkedin.com/in/ahmadihsanfuady)")
